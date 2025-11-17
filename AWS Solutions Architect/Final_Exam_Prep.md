@@ -471,9 +471,10 @@ http://<bucket-name>.s3-website-<region>.amazonaws.com      # S3 Static Website 
 
 ### ***`Route53`***
 - Hosted Zones: a container for DNS records for a specific domain name
-| Type                    | Description                                                                    |
-| ----------------------- | ------------------------------------------------------------------------------ |
-| **Public Hosted Zone**  | Routes traffic **from the internet** to AWS resources                          |
+
+| Type   | Description         |
+| ----- | --------------------- |
+| **Public Hosted Zone**  | Routes traffic **from the internet** to AWS resources       |
 | **Private Hosted Zone** | Routes traffic **within a VPC** (private DNS resolution for internal services) |
 
 ### ***`AWS Amplify`***
@@ -548,26 +549,8 @@ Elastic Beanstalk
 Cost Tag Allocation
 
 
-kinessus strems vs filehose 
-
-Reliability vs Availability vs High availability
 - Forgotten services:
     - Costs 
     - Monitoring 
     - CICD
 
-
-
-
-
-- 8 Sections 
-    - 4 Sections *
-    - 1 To DO *
-    - 4 Sections 
-    - 1 TODO * 
-- Food
-- 8 Sections 
-    - 4 Sections
-    - 1 To DO
-    - 4 Sections
-    - 1 TODO

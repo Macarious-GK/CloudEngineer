@@ -432,6 +432,14 @@
         - Delete the messages using the DeleteMessage API
         - Failed to process a message goes to `Dead Letter Queue`
 
+| Timeout Type                  | Purpose                                  | Default               |
+| ----------------------------- | ---------------------------------------- | --------------------- |
+| **Visibility Timeout**        | Hides message while it's being processed | 30 seconds            |
+| **Message Retention Period**  | Max time a message stays in the queue    | 4 days                |
+| **Receive Message Wait Time** | Long polling to reduce empty responses   | 0 (can set up to 20s) |
+
+
+
 <div style="text-align: center;">
 <img src="sqs.png" alt="Queue Service" width="700" height="280" style="border-radius: 15px;">
 <img src="sqs1.png" alt="Queue Service" width="700" height="110" style="border-radius: 15px;">
@@ -776,6 +784,10 @@ Example: Identity federation for AWS Management Console using SAML
 <div style="text-align: center;">
 <img src="./route53W.png" alt="blue/green deploy" width="700 " height="350" style="border-radius: 15px;">
 </div>
+
+- Inbound DNS (from your on-premises network to AWS)
+- Outbound DNS (from your VPC to on-prem or external systems)
+- And DNS resolution within your VPC (for AWS services or EC2 instances)
 
 ---
 
