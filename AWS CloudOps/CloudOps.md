@@ -167,6 +167,18 @@
     - the Permission of this token based on permission of the role + Session policy permission
 - session policy is a policy we can optionally use when assuming a role to have more restricted permissions than the role give 
 
+### Interview Possible Scenarios
+- Cross-Account S3 Access Without IAM User Creation
+    - S3 resource-based bucket policy with Principal pointing to the external AWS account
+- Temporary Access to S3 or EC2 for Contractors
+    - S3 only: Use pre-signed URLs to provide temporary, time-limited access.
+    - AWS account user: Use STS AssumeRole if allowed, with session policies to restrict permissions.
+- Restricting S3 Access Based on IP Address
+    - resource-based policy with Condition
+- Cross-Account Lambda Invocation Without Role Creation
+    - resource-based policy on Lambda
+
+
 ## VPC
 - 
 ## EC2 
