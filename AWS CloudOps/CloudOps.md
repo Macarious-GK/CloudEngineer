@@ -37,10 +37,92 @@
     - Use Cases: EC2 instance profiles, cross-account access, Lambda execution.
 
 - `Policies`: JSON document tell which permissions granted for the user/group/role
-- Policy Structure:
 
 
 - `Permissions`: the actual action that an entity can do. Ex: GetEc2
+
+### Policies
+- Policy Structure:
+    - Version
+    - Statement: list of policies elements (list(map)) defines a set of permissions
+        - Sid
+        - Effect
+        - Action
+        - Principal
+        - Resources
+        - Condition
+
+```json
+// Policy_1 Identity-Based Customer Managed Polices
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowS3ReadOnly",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::your-bucket-name",
+        "arn:aws:s3:::your-bucket-name/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-east-1"
+        }
+      }
+    },
+    {
+        "Sid": "AllowEc2List_Customer_Made_policy",
+        "Action": "ec2:DescribeInstances",
+        "Effect": "Allow",
+        "Resource": "ec2:*"
+    }
+  ]
+}
+// Policy_2 Resource Based Policy
+{
+    "Version": "2012-10-17",
+    "Statement": [
+    {
+      "Sid": "S3_ResourceBased Policy",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::111122223333:root"
+      },
+      "Action": [
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::your-bucket-name",
+        "arn:aws:s3:::your-bucket-name/*"
+      ],
+    }
+  ]
+}
+// Policy_3:Trust Policy
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Principal": {
+                "AWS": "258049740213",
+                "Service": [
+                    "ec2.amazonaws.com"
+                ]
+            }
+        }
+    ]
+}
+
+```
 
 <div style="text-align: center;">
 <img src="../Images/policytree.jpg" width="900 " height="450" style="border-radius: 15px;"></div>
@@ -56,8 +138,13 @@
     - Use condition keys like aws:SourceIp, aws:PrincipalArn
     - Services That Support Resource-Based Policies:
         - ***S3 , Lambda, SNS, SQS, KMS & API Gateway***
+    - Policy content:
+        - *Principal* **→** Who can access the resource
+        - *Action + Resource* **→** What they can do
 - `Permissions Boundaries`
     - Restrict what IAM users or roles can do, even if a policy allows more.
+    - An identity can only perform actions allowed by both its identity policy AND the permissions boundary
+    - Ex: developers can create roles but cannot escalate beyond the boundary
 
 - `Service Control Policies (SCPs)`
     - Organizational control over accounts.
@@ -73,10 +160,7 @@
 <img src="../Images/allowanddeny.jpg" width="900 " height="300" style="border-radius: 15px;"></div>
 
 
-### 
-
-
-### Notes
+### IAM-Notes
 - Assuming role:
     - we should have role with trust policy (who can use the role), and policy with right permission
     - we than can assume the role to generate temp token to use 
