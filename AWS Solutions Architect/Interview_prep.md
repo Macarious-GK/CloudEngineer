@@ -104,3 +104,83 @@
     - What Region, resource
 
 - It tracks Management Events (Default) , Data Events
+
+
+# Linux
+
+## Network
+- IP commands (link, route, address) -> Temp Change
+- netplan -> Permanent network change 
+- Net Troubleshooting -> `ss`, `netstate`, `tcpdump`
+
+- DNS -> `resolved.conf`, `resolvectl`, `/etc/hosts`
+- DNS Troubleshooting -> `nslookup`, `dig`
+
+- Firewall `ufw`, `PortForward Iptables`
+
+
+# Git
+- VCS Version Control System
+- We start with `git init`
+- We have current working dir, Staging Area, Local Repo
+- Use  `git add` : working dir -> staging Area
+- Use `git commit` : staging Area -> Local Repo
+- We use commit to create a version of our Code
+- Version = Commit, has history that tell who did this version 
+- We set username/email to `git config --global`, this will appear in commits
+- Modify our last commit, We use `--amend` 
+- We use `git reset` & based on mode **soft**, **mixed** & **hard**:  
+    - When `passing HEAD` undo last commit, with/without staging, with/without working dir
+    - No `HEAD` passing undo with/without staging, with/without working dir
+- To move between commit and version use use `git commit <commit-it>`
+- ***git pull is git fetch + git merge***
+    - git fetch -> only bring commit history & branches
+    - git pull -> also merge this changes to working dir
+
+- Merge & Branch
+    - We create a branch to make a changes not in the main code/branch
+    - Merge is combining the changes of both branches into the current working branch
+    - Confect is merging two changes of same line 
+
+- merge, git use three way merge
+    - BASE       (common ancestor)
+    - MAIN       (current branch)
+    - BRANCH B   (other branch)
+
+- Feature Branch Workflow:
+1. create feature branch
+2. push it to remote
+3. Create PR Pull Request
+4. Merge Feature branch to master after review
+
+- Our main to concerns is:
+    - How to keep the feature branch up to date with Main
+    - How to Move changes from feature branch -> Main branch
+- We use `fetch` as safe way to get only commit history changed on remote
+- Clean history we use rebase to make our history liner 
+- When we want to merge we merge into feature first then we do whatever in feature branch and  when we merge back to main, we already resolved  the conflict at the branch side and it created a commit for it 
+
+## Reset
+- ***Reset*** operation rewrites commit history by moving the HEAD pointer.
+- it undo commits without create a new ones.
+    - `soft`: undo last commit, keep staged changes and changes in working dir
+    - `mixed`: undo last commit & unstage changes, keep changes in working dir
+    - `hard`: undo last commit & unstage changes & undo changes in working dir 
+- When no head passed, we can so the same but on the current staged changes and changes in working dir
+
+```bash
+git reset --soft HEAD~1                     # Undo Last Commit (keep changes staged)
+git reset --mixed HEAD~1                    # Undo Last Commit (unstage changes)
+git reset --hard HEAD~1                     # Undo Last Commit Completely (removes the last commit, its staged and working directory changes.)
+```
+
+### Revert
+- undo changes by creating a new commit that reverses the effect of a previous commit
+- Create a new commit that undo the changes of another commit
+```bash
+git revert HEAD                             # Revert the last commit
+git revert <commit-hash>                    # Revert specific command
+git revert --no-edit <commit-hash>          # Skips the commit message editor
+git revert --no-commit <commit-hash>        # Applies changes to your working directory without committing them.
+git revert <old-commit>^..<new-commit>      # Reverts a range of commits (from old to new)
+```
