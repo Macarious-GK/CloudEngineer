@@ -2,6 +2,12 @@
 
 ## Table of Contents
 - [IAM](#iam) ✅
+  - [Overview & Concepts](#overview--concepts)
+  - [Policies](#policies)
+  - [AWS STS](#aws-sts)
+  - [RBAC & ABAC](#rbac--abac)
+  - [IAM-Notes](#iam-notes)
+  - [Interview Possible Scenarios](#interview-possible-scenarios)
 - [VPC](#vpc)
 - [EC2](#ec2)
 - [Elastic Load Balancer (ELB)](#elastic-load-balancer-elb)
@@ -15,11 +21,11 @@
 - [AWS Config](#aws-config)
 - [CloudTrail](#cloudtrail)
 
-## ***`Identity Access Management (IAM)`***
+# ***`Identity Access Management (IAM)`***
 - IAM control **who** can do **what** on **which** resources
 - Used to manage secure **authentication** and **authorization** for AWS resources.
 
-### OverView & Concepts
+## Overview & Concepts
 - `Users`: User who interact with AWS Console or Using CLI/API
 
 - `Groups`: Collection of users share same permissions
@@ -41,7 +47,7 @@
 
 - `Permissions`: the actual action that an entity can do. Ex: GetEc2
 
-### Policies
+## Policies
 - Policy Structure:
     - Version
     - Statement: list of policies elements (list(map)) defines a set of permissions
@@ -182,7 +188,7 @@
   - Enable for Root
   - For Users, they enable it on their own.
 
-### AWS STS
+## AWS STS
 - STS allows you to request temporary security credentials to access AWS services. 
 - It’s essential for secure, temporary, least-privilege access without long-term credentials.
 
@@ -203,7 +209,7 @@
 | **Federated Access**      | Identity provider (Google, AD, SSO)      |
 | **Session Policy**        | Extra restrictions on top of role policy |
 
-### RBAC & ABAC
+## RBAC & ABAC
 - RBAC:
   - Creating a container of permission as a DevOps Role/Group
   - Give the wanted permission to the whole Role/Group once.
@@ -220,14 +226,14 @@
 - `ABAC` = uses tags and conditions in IAM policies. → dynamic permission.
 
 
-### IAM-Notes
+## IAM-Notes
 - Assuming role:
     - we should have role with trust policy (who can use the role), and policy with right permission
     - we than can assume the role to generate temp token to use 
     - the Permission of this token based on permission of the role + Session policy permission
 - session policy is a policy we can optionally use when assuming a role to have more restricted permissions than the role give 
 
-### Interview Possible Scenarios
+## Interview Possible Scenarios
 - Cross-Account S3 Access Without IAM User Creation
     - S3 resource-based bucket policy with Principal pointing to the external AWS account
 - Temporary Access to S3 or EC2 for Contractors
@@ -245,26 +251,114 @@
   - Use AWS CLI to Assume the role to get **AccessKey, SecretKey, SessionToken**
 
 
-## VPC
+# VPC
+- VPC Virtual Private Cloud
+- A Logical isolated portion of AWS Cloud Within a Region
+
+## Networking
+> OSI Model
+- `Layer 1` **–>** Physical: Transmits raw bits over cables or wireless.
+- `Layer 2` **–>** Data Link: Moves data between devices on the same network and handles MAC addresses.
+- `Layer 3` **–>** Network: Routes packets between networks using IP addresses.
+- `Layer 4` **–>** Transport: Ensures reliable delivery of data with TCP/UDP.
+- `Layer 5` **–>** Session: Manages connections and sessions between applications.
+- `Layer 6` **–>** Presentation: Translates data formats and encrypts/decrypts data.
+- `Layer 7` **–>** Application: Provides services for end-user applications (HTTP, SMTP)
+
+> TCP/IP
+- `Network Interface / Link` **–>** Sends bits over cables/wireless, handles MAC addresses.
+- `Internet` **–>** Routes packets using IP addresses.
+- `Transport` **–>** Ensures reliable delivery (TCP) or fast delivery without reliability (UDP).
+- `Application` **–>** Provides end-user services like HTTP, DNS
+
+> IPs
+- Versions:
+  - IPv4 -> 32bits
+  - IPv6 -> 128bits
+
+- IP Components:
+  - Network IDs -> First portion of the ip
+  - Host IDs -> the remaining of the IP 
+  - Subnet: portion of the network address pool
+  - Subnet Mask: determine which is networkID & HostID
+
+- Private IPs
+  - 10.0.0.0/8
+  - 172.16.0.0/16
+  - 192.168.0.0/24
+
+- `CIDR Classless Inter-Domain Routing`
+  - flexible allocation of IP addresses
+  - IP/prefix **->** prefix == Subnet Mask in bit-count form. tell the number of network bits
+
+## VPC Core Concepts
+- VPC is regional
+  - Contain Subnets Private/Public within AZs
+  - AWS reserve 5 IPs for itself: first four & Last one
+  - Public Subnets (VMs with public Ip & private IP)
+  - Private Subnets (VMs with private IP)
+- `Internet Gateway`
+- `Nat Gateway` (has elastic public IP)
+  - Enable Internet access for vms in private subnets.
+- `Routing Tables`:
+  - Determine how routing happen in your network
+  - Main Route for internet access.
+
+
+- Connection from VM-public to client
+    - IGW used to translate the public accessed ip to the vm private IP
+    - No direct connection between the VM and client
+    - 2 way communication can be started
+
+- Connection from VM-private to google
+    - vm send request to nat gateway 
+    - Nat do its magic and  replace source ip
+    - nat use IGW to talk to google
+    - and the connection goes back
+    - Only one way connection, only the private vm can init the connect (security)
+    - Nat keep a `mapping entry` to keep track of its connections
+
+
+
+## NATing
+- `SNAT` changes the ***source IP*** address of a packet as it leaves your network. (*MASQUERADE*)
+- `DNAT` changes the ***destination IP*** address of a packet as it enters your network.
+
+## Firewalls
+- `NACL`: Subnet Level Firewall
+    - Can explicitly allow or deny traffic
+
+- `Security Groups`: Instance Level Firewall
+    - Allow rules only — everything else is implicitly denied.
+
+### stateful VS statless
+- `Stateful`: When a connection is allowed through the firewall in either direction, return traffic matching session table is also allowed
+    - ex: if allow tcp port 80, the response will be allowed even it not explicitly defined
+
+- `Statless`: Does not track connection state. Each packet is evaluated independently based only on rules.
+    - ex: if allow tcp port 80 the response will not be permitted unless an explicit defined incoming rule.
+
+
+
+
+# EC2 
 - 
-## EC2 
+# Elastic Load Balancer (ELB)
 - 
-## Elastic Load Balancer (ELB)
+# Auto Scaling Group (ASG)
 - 
-## Auto Scaling Group (ASG)
+# S3
 - 
-## S3
+# RDS
 - 
-## RDS
+# Route 53
 - 
-## Route 53
+# CloudFormation
 - 
-## CloudFormation
+# CloudWatch
 - 
-## CloudWatch
+# System 
 - 
-## System 
+# AWS Config
 - 
-## AWS Config
-- 
-## CloudTrail
+# CloudTrail
