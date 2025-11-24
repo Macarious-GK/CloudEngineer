@@ -1,7 +1,7 @@
 # AWS CloudOps 
 
 ## Table of Contents
-- [IAM](#iam)
+- [IAM](#iam) ✅
 - [VPC](#vpc)
 - [EC2](#ec2)
 - [Elastic Load Balancer (ELB)](#elastic-load-balancer-elb)
@@ -127,13 +127,20 @@
 <div style="text-align: center;">
 <img src="../Images/policytree.jpg" width="900 " height="450" style="border-radius: 15px;"></div>
 
+- We have 
+  - Identity-Based -> Permission Policy 
+  - Resource-Based -> Permission Policy 
+  - Trust Policy 
+  - Session Policy
+  - Permissions Boundaries -> Restriction Policy
+  - Service Control Policies SCP ->  Organization Policy  
 
-- `IAM Identity-Based Policies`
+- `IAM Identity-Based Permission Policies`
     - Types:
         - Managed Policies: Managed by AWS, No Edit
         - Customer Managed Polices: Created by customer, Editable 
         - Inline Policies: once for user, extend specific user permissions
-- `Resource-Based Policies`
+- `Resource-Based Permission Policies`
     - Used When sharing resources across accounts or services.
     - Use condition keys like aws:SourceIp, aws:PrincipalArn
     - Services That Support Resource-Based Policies:
@@ -141,10 +148,16 @@
     - Policy content:
         - *Principal* **→** Who can access the resource
         - *Action + Resource* **→** What they can do
+
 - `Permissions Boundaries`
     - Restrict what IAM users or roles can do, even if a policy allows more.
     - An identity can only perform actions allowed by both its identity policy AND the permissions boundary
-    - Ex: developers can create roles but cannot escalate beyond the boundary
+    - Used to avoid Privilege Escalation
+    - A user cannot give/create another user permission more than what he has
+    - Ex: 
+      - User1 (IAM full access + No EC2 + No Perm Boundaries)
+      - user1 can create another user with EC2 permission
+      - If User1 has Perm Boundaries, then cant create a user with access that he doesn't have.
 
 - `Service Control Policies (SCPs)`
     - Organizational control over accounts.
@@ -153,6 +166,10 @@
 - `Session Policies` 
     - Limit the existing permissions to specific level
     - only applied during a session that’s created via AWS STS (Security Token Service) — and STS sessions can only be created using a role or certain federated mechanisms.
+
+- `Trust Policy`
+  - This is a policy attached to a role to determine who can assume this role user/service
+  - It has **Principle and No Resources**
 
 - `Allow & Deny`
 
@@ -164,6 +181,44 @@
 - MFA: 
   - Enable for Root
   - For Users, they enable it on their own.
+
+### AWS STS
+- STS allows you to request temporary security credentials to access AWS services. 
+- It’s essential for secure, temporary, least-privilege access without long-term credentials.
+
+| Problem                                   | STS Solution                        |
+| ----------------------------------------- | ----------------------------------- |
+| Long-term credentials are risky           | Use temporary, expiring credentials |
+| Need cross-account access                 | Use STS to assume roles             |
+| Federated access needed (AD/Google login) | Use STS with IdPs                   |
+| Grant restricted session                  | Use session policies                |
+
+---
+
+| Term                      | Meaning                                  |
+| ------------------------- | ---------------------------------------- |
+| **Temporary credentials** | `AccessKey, SecretKey, SessionToken`     |
+| **Session**               | Valid period of an assumed role          |
+| **Assume Role**           | Main STS use to switch permissions       |
+| **Federated Access**      | Identity provider (Google, AD, SSO)      |
+| **Session Policy**        | Extra restrictions on top of role policy |
+
+### RBAC & ABAC
+- RBAC:
+  - Creating a container of permission as a DevOps Role/Group
+  - Give the wanted permission to the whole Role/Group once.
+  - Then add user user to (Group). or let user use (role)
+  - Implement using **IAM Roles and Groups**.
+- ABAC:
+  - access is based on matching tags between the identity and resource.
+  - Tag a resources and give user tag through identity policy to user/group
+  - The Policy should have condition to restrict matching attributes of resource or User
+  - We can create a single policy for all user to restrict access based attributes 
+  - Good for big scale number of users and resources.
+
+- `RBAC` = IAM roles/groups → static permission.
+- `ABAC` = uses tags and conditions in IAM policies. → dynamic permission.
+
 
 ### IAM-Notes
 - Assuming role:
@@ -182,6 +237,12 @@
     - resource-based policy with Condition
 - Cross-Account Lambda Invocation Without Role Creation
     - resource-based policy on Lambda
+
+- For Cross-Account access (account A want to assume role in account B)
+  - Give Account A permission to Allows the user to call **sts:AssumeRole**
+  - Create a Role in Account B with Trust policy that Trust Account A User/s
+  - Give the Role the needed Permissions
+  - Use AWS CLI to Assume the role to get **AccessKey, SecretKey, SessionToken**
 
 
 ## VPC
