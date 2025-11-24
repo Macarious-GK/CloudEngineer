@@ -159,6 +159,11 @@
 <div style="text-align: center;">
 <img src="../Images/allowanddeny.jpg" width="900 " height="300" style="border-radius: 15px;"></div>
 
+- Password Policy: policy for restricting how complex user passwords should be.
+- Access Keys: Used for CLI/SDK access
+- MFA: 
+  - Enable for Root
+  - For Users, they enable it on their own.
 
 ### IAM-Notes
 - Assuming role:
